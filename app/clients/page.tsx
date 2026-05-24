@@ -82,14 +82,19 @@ function parseSheetRow(text: string): Record<string, string> {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function needsJobCard(c: Client) {
-  return !c.payment_reference || !c.device_name || !c.rocket_no || !c.litebeam_ip || !c.router_ip
-}
+function needsJobCard(c: Client) { return !c.payment_reference || !c.device_name }
 
 function missingJobCardFields(c: Client): string[] {
   const m: string[] = []
   if (!c.payment_reference) m.push('Payment Reference')
   if (!c.device_name) m.push('Device Name')
+  return m
+}
+
+function needsNetworkDetails(c: Client) { return !c.rocket_no || !c.litebeam_ip || !c.router_ip }
+
+function missingNetworkFields(c: Client): string[] {
+  const m: string[] = []
   if (!c.rocket_no) m.push('Rocket No.')
   if (!c.litebeam_ip) m.push('LiteBeam IP')
   if (!c.router_ip) m.push('Router IP')
@@ -243,7 +248,8 @@ export default function ClientsPage() {
   const active = filtered.filter(c => c.client_status === 'Active')
   const inactive = filtered.filter(c => c.client_status !== 'Active')
   const pendingJobCard = active.filter(needsJobCard)
-  const complete = active.filter(c => !needsJobCard(c))
+  const pendingNetwork = active.filter(c => !needsJobCard(c) && needsNetworkDetails(c))
+  const complete = active.filter(c => !needsJobCard(c) && !needsNetworkDetails(c))
 
   if (loading) return <div className="text-center py-16 text-gray-400">Loading…</div>
 
@@ -265,12 +271,20 @@ export default function ClientsPage() {
         <span className="text-lg leading-none">+</span> Add Client Manually
       </button>
 
-      {/* Job card alert */}
+      {/* Alerts */}
       {!q && pendingJobCard.length > 0 && (
-        <div className="bg-orange-50 border border-orange-200 rounded-xl p-3 mb-4 flex items-center gap-3">
+        <div className="bg-orange-50 border border-orange-200 rounded-xl p-3 mb-2 flex items-center gap-3">
           <span className="text-orange-500 text-xl shrink-0">&#9888;</span>
           <p className="text-sm text-orange-700 font-medium">
             {pendingJobCard.length} client{pendingJobCard.length !== 1 ? 's are' : ' is'} waiting for job card details
+          </p>
+        </div>
+      )}
+      {!q && pendingNetwork.length > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-4 flex items-center gap-3">
+          <span className="text-blue-400 text-xl shrink-0">&#9432;</span>
+          <p className="text-sm text-blue-700 font-medium">
+            {pendingNetwork.length} client{pendingNetwork.length !== 1 ? 's are' : ' is'} missing network details (Rocket No., LiteBeam IP, Router IP)
           </p>
         </div>
       )}
@@ -289,7 +303,7 @@ export default function ClientsPage() {
       {q && <p className="text-sm text-gray-500 mb-3">{filtered.length === 0 ? 'No clients found' : `${filtered.length} result${filtered.length !== 1 ? 's' : ''} for "${q}"`}</p>}
       {clients.length === 0 && <div className="text-center py-16 text-gray-400"><p className="text-lg">No active clients yet</p><p className="text-sm mt-1">Clients appear here once a request is activated</p></div>}
 
-      {/* Pending job card section */}
+      {/* Awaiting job card */}
       {!q && pendingJobCard.length > 0 && (
         <div className="mb-6">
           <p className="text-xs font-semibold text-orange-600 uppercase tracking-wide mb-2">Awaiting Job Card</p>
@@ -297,10 +311,18 @@ export default function ClientsPage() {
         </div>
       )}
 
+      {/* Network details pending */}
+      {!q && pendingNetwork.length > 0 && (
+        <div className="mb-6">
+          <p className="text-xs font-semibold text-blue-500 uppercase tracking-wide mb-2">Network Details Pending</p>
+          <div className="space-y-3">{pendingNetwork.map(c => <ClientCard key={c.id} c={c} onOpen={openDetail} />)}</div>
+        </div>
+      )}
+
       {/* Complete active clients */}
       {(!q ? complete : active).length > 0 && (
         <div>
-          {!q && complete.length > 0 && pendingJobCard.length > 0 && <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Complete</p>}
+          {!q && (pendingJobCard.length > 0 || pendingNetwork.length > 0) && complete.length > 0 && <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Complete</p>}
           <div className="space-y-3">{(!q ? complete : active).map(c => <ClientCard key={c.id} c={c} onOpen={openDetail} />)}</div>
         </div>
       )}
@@ -467,21 +489,27 @@ export default function ClientsPage() {
 // ── Client card component ─────────────────────────────────────────────────────
 
 function ClientCard({ c, onOpen }: { c: Client; onOpen: (c: Client) => void }) {
-  const pending = needsJobCard(c)
-  const missing = pending ? missingJobCardFields(c) : []
+  const jobPending = needsJobCard(c)
+  const netPending = !jobPending && needsNetworkDetails(c)
+  const missingJob = jobPending ? missingJobCardFields(c) : []
+  const missingNet = netPending ? missingNetworkFields(c) : []
+
+  const borderClass = jobPending ? 'bg-orange-50 border-orange-200' : netPending ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'
+
   return (
-    <button onClick={() => onOpen(c)} className={`block w-full text-left rounded-xl p-4 hover:shadow-md transition-shadow border ${pending ? 'bg-orange-50 border-orange-200' : 'bg-white border-gray-200'}`}>
+    <button onClick={() => onOpen(c)} className={`block w-full text-left rounded-xl p-4 hover:shadow-md transition-shadow border ${borderClass}`}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-semibold text-gray-800">{c.client_name}</span>
-            {pending
-              ? <span className="text-xs px-2 py-0.5 rounded-full bg-orange-200 text-orange-800 font-medium">Job Card Pending</span>
-              : <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">Active</span>}
+            {jobPending && <span className="text-xs px-2 py-0.5 rounded-full bg-orange-200 text-orange-800 font-medium">Job Card Pending</span>}
+            {netPending && <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium">Network Details Pending</span>}
+            {!jobPending && !netPending && <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">Active</span>}
           </div>
           <p className="text-sm text-gray-500 mt-1">{c.phone} &bull; {c.location} &bull; {c.internet_type}</p>
-          {pending && <p className="text-xs text-orange-600 mt-1 font-medium">Still needed: {missing.join(', ')}</p>}
-          {!pending && (
+          {jobPending && <p className="text-xs text-orange-600 mt-1 font-medium">Still needed: {missingJob.join(', ')}</p>}
+          {netPending && <p className="text-xs text-blue-600 mt-1 font-medium">Still needed: {missingNet.join(', ')}</p>}
+          {!jobPending && !netPending && (
             <div className="flex flex-wrap gap-x-3 mt-1">
               {c.payment_reference && <p className="text-xs text-gray-400">Ref: {c.payment_reference}</p>}
               {c.litebeam_ip && <p className="text-xs text-gray-400 font-mono">LiteBeam IP: {c.litebeam_ip}</p>}

@@ -37,7 +37,6 @@ const REQUIRED_TO_ACTIVATE = [
   'client_name', 'phone', 'location', 'internet_type', 'monthly_fee',
   'install_status', 'payment_status',
   'payment_reference', 'pay_date', 'device_name', 'mac_address',
-  'rocket_no', 'router_ip',
 ] as const
 
 const FIELD_LABELS: Record<string, string> = {
@@ -46,7 +45,6 @@ const FIELD_LABELS: Record<string, string> = {
   install_status: 'Installation Status', payment_status: 'Installation Fee Paid',
   payment_reference: 'Payment Reference', pay_date: 'Payment Date',
   device_name: 'Device Name', mac_address: 'MAC Address',
-  rocket_no: 'Rocket No.', router_ip: 'Router IP',
 }
 
 function getMissingFields(r: Request): string[] {
@@ -464,13 +462,10 @@ export default function RequestsPage() {
                     <h3 className="font-semibold text-gray-700 mb-1 mt-6 text-xs uppercase tracking-wide">Job Card Details</h3>
                     <p className="text-xs text-gray-400 mb-4">All fields required before client can be activated (LiteBeam IP is optional)</p>
                     <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <Field label="Rocket No." name="rocket_no" value={editForm.rocket_no ?? ''} onChange={v => setEF('rocket_no', v)} required placeholder="e.g. R-001" />
-                      <Field label="Router IP" name="router_ip" value={editForm.router_ip ?? ''} onChange={v => setEF('router_ip', v)} required placeholder="e.g. 192.168.1.1" />
                       <Field label="Device Name" name="device_name" value={editForm.device_name ?? ''} onChange={v => setEF('device_name', v)} required placeholder="e.g. MikroTik hAP" />
                       <Field label="MAC Address" name="mac_address" value={editForm.mac_address ?? ''} onChange={v => setEF('mac_address', v)} required placeholder="e.g. AA:BB:CC:DD:EE:FF" />
                       <Field label="Payment Reference" name="payment_reference" value={editForm.payment_reference ?? ''} onChange={v => setEF('payment_reference', v)} required placeholder="e.g. POP12345" />
                       <Field label="Payment Date" name="pay_date" type="date" value={editForm.pay_date ?? ''} onChange={v => setEF('pay_date', v)} required />
-                      <Field label="LiteBeam IP (optional)" name="litebeam_ip" value={editForm.litebeam_ip ?? ''} onChange={v => setEF('litebeam_ip', v)} placeholder="e.g. 10.0.0.2" />
                     </div>
                   </>
                 )}

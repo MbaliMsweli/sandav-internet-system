@@ -30,7 +30,6 @@ export const REQUIRED_TO_ACTIVATE = [
   'client_name', 'phone', 'location', 'internet_type',
   'monthly_fee', 'install_status', 'payment_status',
   'payment_reference', 'pay_date', 'device_name', 'mac_address',
-  'rocket_no', 'router_ip',
 ] as const
 
 const FIELD_LABELS: Record<string, string> = {
@@ -45,8 +44,6 @@ const FIELD_LABELS: Record<string, string> = {
   pay_date: 'Payment Date',
   device_name: 'Device Name',
   mac_address: 'MAC Address',
-  rocket_no: 'Rocket No.',
-  router_ip: 'Router IP',
 }
 
 export function getMissingFields(r: Request): string[] {

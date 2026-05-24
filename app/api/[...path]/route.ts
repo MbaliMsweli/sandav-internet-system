@@ -17,13 +17,17 @@ async function proxy(req: NextRequest) {
   const body =
     req.method !== 'GET' && req.method !== 'HEAD' ? await req.text() : undefined
 
-  const res = await fetch(url, { method: req.method, headers, body })
-  const data = await res.text()
-
-  return new NextResponse(data, {
-    status: res.status,
-    headers: { 'Content-Type': res.headers.get('Content-Type') ?? 'application/json' },
-  })
+  try {
+    const res = await fetch(url, { method: req.method, headers, body })
+    const data = await res.text()
+    return new NextResponse(data, {
+      status: res.status,
+      headers: { 'Content-Type': res.headers.get('Content-Type') ?? 'application/json' },
+    })
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    return NextResponse.json({ error: `Cannot reach backend (${BACKEND}): ${msg}` }, { status: 502 })
+  }
 }
 
 export const GET = proxy

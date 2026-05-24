@@ -281,9 +281,9 @@ export default function ClientsPage() {
         </div>
       )}
       {!q && pendingNetwork.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4 flex items-center gap-3">
-          <span className="text-red-500 text-xl shrink-0">&#9888;</span>
-          <p className="text-sm text-red-700 font-medium">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-4 flex items-center gap-3">
+          <span className="text-blue-400 text-xl shrink-0">&#9432;</span>
+          <p className="text-sm text-blue-700 font-medium">
             {pendingNetwork.length} client{pendingNetwork.length !== 1 ? 's are' : ' is'} missing network details (Rocket No., LiteBeam IP, Router IP)
           </p>
         </div>
@@ -314,7 +314,7 @@ export default function ClientsPage() {
       {/* Network details pending */}
       {!q && pendingNetwork.length > 0 && (
         <div className="mb-6">
-          <p className="text-xs font-semibold text-red-600 uppercase tracking-wide mb-2">Network Details Pending</p>
+          <p className="text-xs font-semibold text-blue-500 uppercase tracking-wide mb-2">Network Details Pending</p>
           <div className="space-y-3">{pendingNetwork.map(c => <ClientCard key={c.id} c={c} onOpen={openDetail} />)}</div>
         </div>
       )}
@@ -494,7 +494,7 @@ function ClientCard({ c, onOpen }: { c: Client; onOpen: (c: Client) => void }) {
   const missingJob = jobPending ? missingJobCardFields(c) : []
   const missingNet = netPending ? missingNetworkFields(c) : []
 
-  const borderClass = jobPending ? 'bg-orange-50 border-orange-200' : netPending ? 'bg-red-50 border-red-200' : 'bg-white border-gray-200'
+  const borderClass = jobPending ? 'bg-orange-50 border-orange-200' : netPending ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'
 
   return (
     <button onClick={() => onOpen(c)} className={`block w-full text-left rounded-xl p-4 hover:shadow-md transition-shadow border ${borderClass}`}>
@@ -503,12 +503,12 @@ function ClientCard({ c, onOpen }: { c: Client; onOpen: (c: Client) => void }) {
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-semibold text-gray-800">{c.client_name}</span>
             {jobPending && <span className="text-xs px-2 py-0.5 rounded-full bg-orange-200 text-orange-800 font-medium">Job Card Pending</span>}
-            {netPending && <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium">Network Details Pending</span>}
+            {netPending && <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium">Network Details Pending</span>}
             {!jobPending && !netPending && <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">Active</span>}
           </div>
           <p className="text-sm text-gray-500 mt-1">{c.phone} &bull; {c.location} &bull; {c.internet_type}</p>
           {jobPending && <p className="text-xs text-orange-600 mt-1 font-medium">Still needed: {missingJob.join(', ')}</p>}
-          {netPending && <p className="text-xs text-red-600 mt-1 font-medium">Still needed: {missingNet.join(', ')}</p>}
+          {netPending && <p className="text-xs text-blue-600 mt-1 font-medium">Still needed: {missingNet.join(', ')}</p>}
           {!jobPending && !netPending && (
             <div className="flex flex-wrap gap-x-3 mt-1">
               {c.payment_reference && <p className="text-xs text-gray-400">Ref: {c.payment_reference}</p>}

@@ -203,13 +203,12 @@ export default function ClientsPage() {
     setEditSaving(true)
     setEditMsg('')
     try {
-      const updated = await apiFetch(`/api/clients/${selected.id}`, {
+      await apiFetch(`/api/clients/${selected.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editForm),
       })
-      setEditMsg('Saved!')
-      setSelected(updated)
+      closeDetail()
       reload()
     } catch (err: unknown) {
       setEditMsg(err instanceof Error ? err.message : 'Error saving.')

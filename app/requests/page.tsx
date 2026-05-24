@@ -459,8 +459,6 @@ export default function RequestsPage() {
                           <option>Paid</option>
                         </select>
                       </div>
-                      <Field label="Payment Reference" name="payment_reference" value={editForm.payment_reference ?? ''} onChange={v => setEF('payment_reference', v)} required placeholder="e.g. POP12345" />
-                      <Field label="Payment Date" name="pay_date" type="date" value={editForm.pay_date ?? ''} onChange={v => setEF('pay_date', v)} required />
                     </div>
 
                     <h3 className="font-semibold text-gray-700 mb-1 mt-6 text-xs uppercase tracking-wide">Job Card Details</h3>
@@ -470,6 +468,8 @@ export default function RequestsPage() {
                       <Field label="Router IP" name="router_ip" value={editForm.router_ip ?? ''} onChange={v => setEF('router_ip', v)} required placeholder="e.g. 192.168.1.1" />
                       <Field label="Device Name" name="device_name" value={editForm.device_name ?? ''} onChange={v => setEF('device_name', v)} required placeholder="e.g. MikroTik hAP" />
                       <Field label="MAC Address" name="mac_address" value={editForm.mac_address ?? ''} onChange={v => setEF('mac_address', v)} required placeholder="e.g. AA:BB:CC:DD:EE:FF" />
+                      <Field label="Payment Reference" name="payment_reference" value={editForm.payment_reference ?? ''} onChange={v => setEF('payment_reference', v)} required placeholder="e.g. POP12345" />
+                      <Field label="Payment Date" name="pay_date" type="date" value={editForm.pay_date ?? ''} onChange={v => setEF('pay_date', v)} required />
                       <Field label="LiteBeam IP (optional)" name="litebeam_ip" value={editForm.litebeam_ip ?? ''} onChange={v => setEF('litebeam_ip', v)} placeholder="e.g. 10.0.0.2" />
                     </div>
                   </>

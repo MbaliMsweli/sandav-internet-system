@@ -23,7 +23,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   }
   const token = header.slice(7)
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET ?? 'sandav_secret') as AuthUser
+    const payload = jwt.verify(token, process.env.JWT_SECRET!) as AuthUser
     req.user = payload
     next()
   } catch {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const BACKEND = 'http://164.92.118.103:3001'
+const BACKEND = process.env.BACKEND_URL ?? 'http://localhost:3001'
 
 async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname

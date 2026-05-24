@@ -1,12 +1,21 @@
 import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import rateLimit from 'express-rate-limit'
 import { query, initSchema } from '../lib/db'
 import { requireAuth } from '../middleware/auth'
 
 const router = Router()
 
-router.post('/login', async (req, res) => {
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many login attempts — please try again in 15 minutes.' },
+})
+
+router.post('/login', loginLimiter, async (req, res) => {
   await initSchema()
   const { username, password } = req.body as { username?: string; password?: string }
   if (!username || !password) {
@@ -29,7 +38,7 @@ router.post('/login', async (req, res) => {
     }
     const token = jwt.sign(
       { id: user.id, name: user.name, role: user.role },
-      process.env.JWT_SECRET ?? 'sandav_secret',
+      process.env.JWT_SECRET!,
       { expiresIn: '24h' }
     )
     res.json({ token, user: { id: user.id, name: user.name, role: user.role } })

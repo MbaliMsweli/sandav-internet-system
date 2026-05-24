@@ -45,6 +45,8 @@ export default function BillingPage() {
   const [payingId, setPayingId] = useState<number | null>(null)
   const [payForm, setPayForm] = useState({ payment_method: 'EFT', pay_date: '', notes: '' })
   const [saving, setSaving] = useState(false)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const prevMonth = month === 1 ? 12 : month - 1
   const prevYear  = month === 1 ? year - 1 : year
@@ -83,6 +85,17 @@ export default function BillingPage() {
       reload()
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleDeleteRow(id: number) {
+    setDeleting(true)
+    try {
+      await apiFetch(`/api/billing/${id}`, { method: 'DELETE' })
+      setConfirmDeleteId(null)
+      reload()
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -178,9 +191,27 @@ export default function BillingPage() {
                           Mark Paid
                         </button>
                       )}
+                      <button onClick={() => setConfirmDeleteId(confirmDeleteId === row.id ? null : row.id)}
+                        className="text-xs text-gray-300 hover:text-red-400 mt-1 underline block ml-auto">
+                        Remove
+                      </button>
                     </div>
                   </div>
                 </div>
+
+                {confirmDeleteId === row.id && (
+                  <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 mt-1 text-center">
+                    <p className="font-semibold text-red-800 mb-3">Remove {row.client_name} from this month&apos;s billing? This cannot be undone.</p>
+                    <div className="flex gap-3 justify-center">
+                      <button onClick={() => handleDeleteRow(row.id)} disabled={deleting}
+                        className="bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors">
+                        {deleting ? 'Removing...' : 'Yes, Remove'}
+                      </button>
+                      <button onClick={() => setConfirmDeleteId(null)}
+                        className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors">Cancel</button>
+                    </div>
+                  </div>
+                )}
 
                 {payingId === row.id && (
                   <div className="bg-green-50 border border-green-200 rounded-xl p-4 mt-1 space-y-3">

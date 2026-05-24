@@ -59,6 +59,10 @@ export async function updateBillingRow(id: number, data: {
   await query(`UPDATE billing SET ${set} WHERE id = $${entries.length + 1}`, [...values, id])
 }
 
+export async function deleteBillingRow(id: number): Promise<void> {
+  await query(`DELETE FROM billing WHERE id = $1`, [id])
+}
+
 async function ensureBillingRows(month: number, year: number): Promise<void> {
   await query(`
     INSERT INTO billing (client_id, month, year)

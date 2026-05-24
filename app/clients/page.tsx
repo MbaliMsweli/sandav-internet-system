@@ -378,22 +378,6 @@ export default function ClientsPage() {
             </div>
             <div className="overflow-y-auto p-5 space-y-4">
 
-              {deleteMsg && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700 font-medium">{deleteMsg}</div>
-              )}
-
-              {confirmDelete && (
-                <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 text-center">
-                  <p className="font-semibold text-red-800 mb-3">Delete {selected.client_name}? This cannot be undone.</p>
-                  <div className="flex gap-3 justify-center">
-                    <button type="button" onClick={handleDelete} disabled={deleting} className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors">
-                      {deleting ? 'Deleting...' : 'Yes, Delete'}
-                    </button>
-                    <button type="button" onClick={() => setConfirmDelete(false)} className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors">Cancel</button>
-                  </div>
-                </div>
-              )}
-
               <form onSubmit={handleSave} className="space-y-4">
                 {/* Client Info */}
                 <div className="bg-white border border-gray-200 rounded-2xl p-4">
@@ -433,10 +417,23 @@ export default function ClientsPage() {
                 </button>
               </form>
 
-              <button type="button" onClick={() => setConfirmDelete(true)}
-                className="w-full bg-white border border-red-300 text-red-600 py-2.5 rounded-lg font-medium hover:bg-red-50 transition-colors">
-                Delete Client
-              </button>
+              {confirmDelete ? (
+                <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 text-center">
+                  {deleteMsg && <p className="text-sm text-red-700 font-medium mb-2">{deleteMsg}</p>}
+                  <p className="font-semibold text-red-800 mb-3">Delete {selected.client_name}? This cannot be undone.</p>
+                  <div className="flex gap-3 justify-center">
+                    <button type="button" onClick={handleDelete} disabled={deleting} className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors">
+                      {deleting ? 'Deleting...' : 'Yes, Delete'}
+                    </button>
+                    <button type="button" onClick={() => setConfirmDelete(false)} className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors">Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <button type="button" onClick={() => setConfirmDelete(true)}
+                  className="w-full bg-white border border-red-300 text-red-600 py-2.5 rounded-lg font-medium hover:bg-red-50 transition-colors">
+                  Delete Client
+                </button>
+              )}
 
               {history.length > 0 && (
                 <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express'
-import { getBillingForMonth, getBillingSummary, updateBillingRow } from '../lib/billing'
+import { getBillingForMonth, getBillingSummary, updateBillingRow, deleteBillingRow } from '../lib/billing'
 import { logAction } from '../lib/audit'
 
 const router = Router()
@@ -25,6 +25,17 @@ router.put('/:id', async (req: Request, res: Response) => {
     const id = Number(req.params.id)
     await updateBillingRow(id, req.body)
     await logAction(req.user!.id, req.user!.name, 'updated', 'billing', id)
+    res.json({ ok: true })
+  } catch (err: unknown) {
+    res.status(500).json({ error: err instanceof Error ? err.message : String(err) })
+  }
+})
+
+router.delete('/:id', async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id)
+    await logAction(req.user!.id, req.user!.name, 'deleted', 'billing', id)
+    await deleteBillingRow(id)
     res.json({ ok: true })
   } catch (err: unknown) {
     res.status(500).json({ error: err instanceof Error ? err.message : String(err) })

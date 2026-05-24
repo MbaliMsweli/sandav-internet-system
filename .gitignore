@@ -30,8 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
+!**/.env.example
 
 # vercel
 .vercel
@@ -45,13 +46,15 @@ sandav.db
 
 ca-certificate.crt
 
-.vercel
-
 # backend build & deps
 backend/node_modules/
 backend/dist/
 
-# screenshots and test files
+# screenshots, logs, and test artifacts
 *.png
 *.zip
 *.log
+.playwright-mcp/
+
+# claude code local settings
+.claude/

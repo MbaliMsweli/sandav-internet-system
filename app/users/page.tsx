@@ -10,12 +10,28 @@ type User = {
   created_at: string
 }
 
+function EyeIcon({ open }: { open: boolean }) {
+  return open ? (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+    </svg>
+  ) : (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.97 9.97 0 012.05-3.375M6.228 6.228A9.97 9.97 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.97 9.97 0 01-4.254 5.284M3 3l18 18" />
+    </svg>
+  )
+}
+
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [name, setName] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const [role, setRole] = useState<'staff' | 'admin'>('staff')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -23,6 +39,7 @@ export default function UsersPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null)
   const [resetId, setResetId] = useState<number | null>(null)
   const [resetPassword, setResetPassword] = useState('')
+  const [showResetPassword, setShowResetPassword] = useState(false)
   const [resetSaving, setResetSaving] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<number | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
@@ -54,6 +71,10 @@ export default function UsersPage() {
     e.preventDefault()
     setError('')
     setSuccess('')
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.')
+      return
+    }
     setSaving(true)
     try {
       await apiFetch('/api/users', {
@@ -65,6 +86,7 @@ export default function UsersPage() {
       setName('')
       setUsername('')
       setPassword('')
+      setConfirmPassword('')
       setRole('staff')
       await load()
     } catch (err: unknown) {
@@ -136,15 +158,50 @@ export default function UsersPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              minLength={6}
-              placeholder="At least 6 characters"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1595D8]"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                minLength={6}
+                placeholder="At least 6 characters"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#1595D8]"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(v => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                tabIndex={-1}
+              >
+                <EyeIcon open={showPassword} />
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <div className="relative">
+              <input
+                type={showConfirm ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                required
+                minLength={6}
+                placeholder="Re-enter password"
+                className={`w-full border rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#1595D8] ${confirmPassword && confirmPassword !== password ? 'border-red-400' : 'border-gray-300'}`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirm(v => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                tabIndex={-1}
+              >
+                <EyeIcon open={showConfirm} />
+              </button>
+            </div>
+            {confirmPassword && confirmPassword !== password && (
+              <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
@@ -201,15 +258,25 @@ export default function UsersPage() {
                   </div>
                 ) : resetId === u.id ? (
                   <div className="flex items-center gap-2">
-                    <input
-                      type="password"
-                      value={resetPassword}
-                      onChange={e => setResetPassword(e.target.value)}
-                      placeholder="New password"
-                      className="border border-gray-300 rounded-lg px-2 py-1 text-xs w-32 focus:outline-none focus:ring-1 focus:ring-[#1595D8]"
-                    />
+                    <div className="relative">
+                      <input
+                        type={showResetPassword ? 'text' : 'password'}
+                        value={resetPassword}
+                        onChange={e => setResetPassword(e.target.value)}
+                        placeholder="New password"
+                        className="border border-gray-300 rounded-lg px-2 py-1 pr-7 text-xs w-36 focus:outline-none focus:ring-1 focus:ring-[#1595D8]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowResetPassword(v => !v)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        tabIndex={-1}
+                      >
+                        <EyeIcon open={showResetPassword} />
+                      </button>
+                    </div>
                     <button onClick={() => handleResetPassword(u.id)} disabled={resetSaving} className="text-xs bg-[#1595D8] text-white px-3 py-1 rounded-lg font-medium hover:bg-[#1178b5] disabled:opacity-50">{resetSaving ? '...' : 'Save'}</button>
-                    <button onClick={() => { setResetId(null); setResetPassword('') }} className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-lg font-medium hover:bg-gray-200">Cancel</button>
+                    <button onClick={() => { setResetId(null); setResetPassword(''); setShowResetPassword(false) }} className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-lg font-medium hover:bg-gray-200">Cancel</button>
                   </div>
                 ) : (
                   <div className="flex items-center gap-3">

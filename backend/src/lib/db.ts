@@ -4,20 +4,21 @@ import { join } from 'path'
 
 const u = new URL(process.env.DATABASE_URL ?? 'postgresql://localhost/db')
 
-function loadCert(): string {
+function loadCert(): string | undefined {
   if (process.env.DATABASE_CA_CERT) return process.env.DATABASE_CA_CERT
   const path = join(process.cwd(), 'ca-certificate.crt')
   if (existsSync(path)) return readFileSync(path).toString()
-  throw new Error('No CA certificate found. Set DATABASE_CA_CERT env var or add ca-certificate.crt to project root.')
+  return undefined
 }
 
+const cert = loadCert()
 const pool = new Pool({
   host: u.hostname,
   port: parseInt(u.port) || 5432,
   database: u.pathname.slice(1),
   user: u.username || 'doadmin',
   password: u.password,
-  ssl: { rejectUnauthorized: true, ca: loadCert() },
+  ssl: cert ? { rejectUnauthorized: true, ca: cert } : { rejectUnauthorized: false },
   max: 3,
   idleTimeoutMillis: 10000,
   connectionTimeoutMillis: 30000,

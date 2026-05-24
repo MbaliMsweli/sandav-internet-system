@@ -459,8 +459,8 @@ export default function RequestsPage() {
                       </div>
                     </div>
 
-                    <h3 className="font-semibold text-gray-700 mb-1 mt-6 text-xs uppercase tracking-wide">Job Card Details</h3>
-                    <p className="text-xs text-gray-400 mb-4">All fields required before client can be activated (LiteBeam IP is optional)</p>
+                    <h3 className="font-bold text-red-600 mb-1 mt-6 text-xs uppercase tracking-wide">Job Card Details</h3>
+                    <p className="text-xs text-gray-400 mb-4">All fields required before client can be activated</p>
                     <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <Field label="Device Name" name="device_name" value={editForm.device_name ?? ''} onChange={v => setEF('device_name', v)} required placeholder="e.g. MikroTik hAP" />
                       <Field label="MAC Address" name="mac_address" value={editForm.mac_address ?? ''} onChange={v => setEF('mac_address', v)} required placeholder="e.g. AA:BB:CC:DD:EE:FF" />

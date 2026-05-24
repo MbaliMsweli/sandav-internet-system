@@ -30,7 +30,8 @@ export default function UsersPage() {
   useEffect(() => {
     try {
       const token = localStorage.getItem('sandav_token') ?? ''
-      const payload = JSON.parse(atob(token.split('.')[1]))
+      const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+      const payload = JSON.parse(atob(base64))
       setCurrentUserId(payload.id ?? null)
       setIsAdmin(payload.role === 'admin')
     } catch {}

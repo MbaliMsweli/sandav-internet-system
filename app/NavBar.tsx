@@ -18,7 +18,8 @@ export default function NavBar() {
       return
     }
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]))
+      const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+      const payload = JSON.parse(atob(base64))
       setUserName(payload.name ?? null)
       setIsAdmin(payload.role === 'admin')
     } catch {}

@@ -82,12 +82,17 @@ function parseSheetRow(text: string): Record<string, string> {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function needsJobCard(c: Client) { return !c.payment_reference || !c.device_name }
+function needsJobCard(c: Client) {
+  return !c.payment_reference || !c.device_name || !c.rocket_no || !c.litebeam_ip || !c.router_ip
+}
 
 function missingJobCardFields(c: Client): string[] {
   const m: string[] = []
   if (!c.payment_reference) m.push('Payment Reference')
   if (!c.device_name) m.push('Device Name')
+  if (!c.rocket_no) m.push('Rocket No.')
+  if (!c.litebeam_ip) m.push('LiteBeam IP')
+  if (!c.router_ip) m.push('Router IP')
   return m
 }
 

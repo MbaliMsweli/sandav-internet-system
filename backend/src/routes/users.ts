@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import { query } from '../lib/db'
+import { requireAdmin } from '../middleware/auth'
 
 const router = Router()
 
@@ -15,7 +16,7 @@ router.get('/', async (_req, res) => {
   }
 })
 
-router.post('/', async (req, res) => {
+router.post('/', requireAdmin, async (req, res) => {
   const { name, username, password } = req.body as { name?: string; username?: string; password?: string }
   if (!name || !username || !password) {
     res.status(400).json({ error: 'Name, username and password are required' })
@@ -43,7 +44,7 @@ router.post('/', async (req, res) => {
   }
 })
 
-router.put('/:id/password', async (req, res) => {
+router.put('/:id/password', requireAdmin, async (req, res) => {
   const id = parseInt(req.params.id)
   const { password } = req.body as { password?: string }
   if (!password || password.length < 6) {
@@ -59,7 +60,7 @@ router.put('/:id/password', async (req, res) => {
   }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireAdmin, async (req, res) => {
   const id = parseInt(req.params.id)
   if (req.user?.id === id) {
     res.status(400).json({ error: 'You cannot delete your own account' })

@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 export interface AuthUser {
   id: number
   name: string
+  role: string
 }
 
 declare global {
@@ -28,4 +29,12 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   } catch {
     res.status(401).json({ error: 'Session expired — please log in again' })
   }
+}
+
+export function requireAdmin(req: Request, res: Response, next: NextFunction) {
+  if (req.user?.role !== 'admin') {
+    res.status(403).json({ error: 'Admin access required' })
+    return
+  }
+  next()
 }

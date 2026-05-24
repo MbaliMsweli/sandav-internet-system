@@ -7,6 +7,7 @@ export default function NavBar() {
   const router = useRouter()
   const pathname = usePathname()
   const [userName, setUserName] = useState<string | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     const publicPages = ['/login', '/signup', '/forgot-password']
@@ -19,6 +20,7 @@ export default function NavBar() {
     try {
       const user = JSON.parse(localStorage.getItem('sandav_user') ?? '{}')
       setUserName(user.name ?? null)
+      setIsAdmin(user.role === 'admin')
     } catch {}
   }, [pathname, router])
 
@@ -51,9 +53,11 @@ export default function NavBar() {
           <Link href="/import" className="px-3 py-1.5 rounded-full text-sm font-medium transition-colors hover:bg-white/10">
             Import
           </Link>
-          <Link href="/users" className="px-3 py-1.5 rounded-full text-sm font-medium transition-colors hover:bg-white/10">
-            Users
-          </Link>
+          {isAdmin && (
+            <Link href="/users" className="px-3 py-1.5 rounded-full text-sm font-medium transition-colors hover:bg-white/10">
+              Users
+            </Link>
+          )}
           <div className="ml-3 pl-3 border-l border-white/20 flex items-center gap-2">
             {userName && (
               <span className="text-xs text-white/70 hidden sm:block">{userName}</span>

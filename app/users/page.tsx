@@ -23,11 +23,13 @@ export default function UsersPage() {
   const [resetPassword, setResetPassword] = useState('')
   const [resetSaving, setResetSaving] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<number | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     try {
       const stored = JSON.parse(localStorage.getItem('sandav_user') ?? '{}')
       setCurrentUserId(stored.id ?? null)
+      setIsAdmin(stored.role === 'admin')
     } catch {}
     load()
   }, [])
@@ -101,8 +103,8 @@ export default function UsersPage() {
     <div className="max-w-2xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-gray-800">Staff Accounts</h1>
 
-      {/* Add user form */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6">
+      {/* Add user form — admin only */}
+      {isAdmin && <div className="bg-white border border-gray-200 rounded-2xl p-6">
         <h2 className="text-base font-semibold text-gray-700 mb-4">Add New Staff Member</h2>
         <form onSubmit={handleAdd} className="space-y-3">
           <div>
@@ -149,7 +151,7 @@ export default function UsersPage() {
             {saving ? 'Adding...' : 'Add Staff Member'}
           </button>
         </form>
-      </div>
+      </div>}
 
       {/* Users list */}
       <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
@@ -170,7 +172,7 @@ export default function UsersPage() {
                 </div>
                 {u.id === currentUserId ? (
                   <span className="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full">You</span>
-                ) : deleteConfirm === u.id ? (
+                ) : !isAdmin ? null : deleteConfirm === u.id ? (
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-500">Remove {u.name}?</span>
                     <button onClick={() => handleDelete(u.id)} className="text-xs bg-red-500 text-white px-3 py-1 rounded-lg font-medium hover:bg-red-600">Yes</button>

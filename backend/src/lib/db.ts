@@ -94,6 +94,9 @@ async function _createSchema() {
       )
     `).catch(() => {})
     await query(`CREATE INDEX IF NOT EXISTS idx_audit_record ON audit_log(table_name, record_id)`).catch(() => {})
+    // role migration
+    await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'staff'`).catch(() => {})
+    await query(`UPDATE users SET role = 'admin' WHERE id = (SELECT MIN(id) FROM users) AND role = 'staff'`).catch(() => {})
     return
   }
 
@@ -173,6 +176,7 @@ async function _createSchema() {
       name TEXT NOT NULL,
       username TEXT UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'staff',
       created_at TEXT DEFAULT (NOW()::TEXT)
     )
   `)

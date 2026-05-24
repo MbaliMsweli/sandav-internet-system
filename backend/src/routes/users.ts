@@ -7,8 +7,8 @@ const router = Router()
 
 router.get('/', async (_req, res) => {
   try {
-    const users = await query<{ id: number; name: string; username: string; created_at: string }>(
-      `SELECT id, name, username, created_at FROM users ORDER BY name`
+    const users = await query<{ id: number; name: string; username: string; role: string; created_at: string }>(
+      `SELECT id, name, username, role, created_at FROM users ORDER BY name`
     )
     res.json(users)
   } catch (err: unknown) {
@@ -17,7 +17,7 @@ router.get('/', async (_req, res) => {
 })
 
 router.post('/', requireAdmin, async (req, res) => {
-  const { name, username, password } = req.body as { name?: string; username?: string; password?: string }
+  const { name, username, password, role } = req.body as { name?: string; username?: string; password?: string; role?: string }
   if (!name || !username || !password) {
     res.status(400).json({ error: 'Name, username and password are required' })
     return
@@ -26,6 +26,7 @@ router.post('/', requireAdmin, async (req, res) => {
     res.status(400).json({ error: 'Password must be at least 6 characters' })
     return
   }
+  const assignedRole = role === 'admin' ? 'admin' : 'staff'
   try {
     const existing = await query(`SELECT id FROM users WHERE username = $1`, [username.trim().toLowerCase()])
     if (existing.length > 0) {
@@ -33,10 +34,10 @@ router.post('/', requireAdmin, async (req, res) => {
       return
     }
     const hash = await bcrypt.hash(password, 10)
-    const [user] = await query<{ id: number; name: string; username: string; created_at: string }>(
-      `INSERT INTO users (name, username, password_hash) VALUES ($1, $2, $3)
-       RETURNING id, name, username, created_at`,
-      [name.trim(), username.trim().toLowerCase(), hash]
+    const [user] = await query<{ id: number; name: string; username: string; role: string; created_at: string }>(
+      `INSERT INTO users (name, username, password_hash, role) VALUES ($1, $2, $3, $4)
+       RETURNING id, name, username, role, created_at`,
+      [name.trim(), username.trim().toLowerCase(), hash, assignedRole]
     )
     res.status(201).json(user)
   } catch (err: unknown) {

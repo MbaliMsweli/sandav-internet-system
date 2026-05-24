@@ -18,9 +18,9 @@ export default function NavBar() {
       return
     }
     try {
-      const user = JSON.parse(localStorage.getItem('sandav_user') ?? '{}')
-      setUserName(user.name ?? null)
-      setIsAdmin(user.role === 'admin')
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      setUserName(payload.name ?? null)
+      setIsAdmin(payload.role === 'admin')
     } catch {}
   }, [pathname, router])
 

@@ -19,6 +19,9 @@ export interface Request {
   pay_date: string | null
   device_name: string | null
   mac_address: string | null
+  rocket_no: string | null
+  litebeam_ip: string | null
+  router_ip: string | null
   moved_to_permanent: number
   created_at: string
 }
@@ -26,6 +29,8 @@ export interface Request {
 export const REQUIRED_TO_ACTIVATE = [
   'client_name', 'phone', 'location', 'internet_type',
   'monthly_fee', 'install_status', 'payment_status',
+  'payment_reference', 'pay_date', 'device_name', 'mac_address',
+  'rocket_no', 'router_ip',
 ] as const
 
 const FIELD_LABELS: Record<string, string> = {
@@ -36,6 +41,12 @@ const FIELD_LABELS: Record<string, string> = {
   monthly_fee: 'Monthly Fee',
   install_status: 'Installation Status',
   payment_status: 'Installation Fee Paid',
+  payment_reference: 'Payment Reference',
+  pay_date: 'Payment Date',
+  device_name: 'Device Name',
+  mac_address: 'MAC Address',
+  rocket_no: 'Rocket No.',
+  router_ip: 'Router IP',
 }
 
 export function getMissingFields(r: Request): string[] {

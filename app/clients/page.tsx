@@ -145,6 +145,7 @@ export default function ClientsPage() {
   const [editMsg, setEditMsg] = useState('')
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [deleteMsg, setDeleteMsg] = useState('')
   const [history, setHistory] = useState<{ id: number; user_name: string; action: string; created_at: string }[]>([])
 
   const reload = useCallback(() => {
@@ -166,6 +167,7 @@ export default function ClientsPage() {
     })
     setEditMsg('')
     setConfirmDelete(false)
+    setDeleteMsg('')
     setHistory([])
     apiFetch(`/api/audit/clients/${c.id}`).then(setHistory).catch(() => {})
   }
@@ -219,10 +221,14 @@ export default function ClientsPage() {
   async function handleDelete() {
     if (!selected) return
     setDeleting(true)
+    setDeleteMsg('')
     try {
       await apiFetch(`/api/clients/${selected.id}`, { method: 'DELETE' })
       closeDetail()
       reload()
+    } catch (err: unknown) {
+      setDeleteMsg(err instanceof Error ? err.message : 'Could not delete. Please try again.')
+      setConfirmDelete(false)
     } finally {
       setDeleting(false)
     }
@@ -372,14 +378,18 @@ export default function ClientsPage() {
             </div>
             <div className="overflow-y-auto p-5 space-y-4">
 
+              {deleteMsg && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700 font-medium">{deleteMsg}</div>
+              )}
+
               {confirmDelete && (
                 <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 text-center">
                   <p className="font-semibold text-red-800 mb-3">Delete {selected.client_name}? This cannot be undone.</p>
                   <div className="flex gap-3 justify-center">
-                    <button onClick={handleDelete} disabled={deleting} className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors">
+                    <button type="button" onClick={handleDelete} disabled={deleting} className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors">
                       {deleting ? 'Deleting...' : 'Yes, Delete'}
                     </button>
-                    <button onClick={() => setConfirmDelete(false)} className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors">Cancel</button>
+                    <button type="button" onClick={() => setConfirmDelete(false)} className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors">Cancel</button>
                   </div>
                 </div>
               )}

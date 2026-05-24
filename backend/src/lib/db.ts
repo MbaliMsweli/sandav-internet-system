@@ -68,6 +68,9 @@ async function _createSchema() {
     await query(`ALTER TABLE requests ADD COLUMN IF NOT EXISTS pay_date TEXT`).catch(() => {})
     await query(`ALTER TABLE requests ADD COLUMN IF NOT EXISTS device_name TEXT`).catch(() => {})
     await query(`ALTER TABLE requests ADD COLUMN IF NOT EXISTS mac_address TEXT`).catch(() => {})
+    await query(`ALTER TABLE requests ADD COLUMN IF NOT EXISTS rocket_no TEXT`).catch(() => {})
+    await query(`ALTER TABLE requests ADD COLUMN IF NOT EXISTS litebeam_ip TEXT`).catch(() => {})
+    await query(`ALTER TABLE requests ADD COLUMN IF NOT EXISTS router_ip TEXT`).catch(() => {})
     await query(`ALTER TABLE clients ADD COLUMN IF NOT EXISTS rocket_no TEXT`).catch(() => {})
     await query(`ALTER TABLE clients ADD COLUMN IF NOT EXISTS litebeam_ip TEXT`).catch(() => {})
     await query(`ALTER TABLE clients ADD COLUMN IF NOT EXISTS router_ip TEXT`).catch(() => {})
@@ -121,6 +124,9 @@ async function _createSchema() {
       pay_date TEXT,
       device_name TEXT,
       mac_address TEXT,
+      rocket_no TEXT,
+      litebeam_ip TEXT,
+      router_ip TEXT,
       moved_to_permanent INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (NOW()::TEXT)
     )

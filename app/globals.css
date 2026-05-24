@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f0f6fb;
+  --foreground: #111827;
+  --brand-blue: #1595D8;
+  --brand-navy: #1A3066;
+  --brand-blue-dark: #1178b5;
+  --brand-navy-dark: #122348;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.btn-brand {
+  background-color: var(--brand-blue);
+  color: #fff;
+}
+.btn-brand:hover {
+  background-color: var(--brand-blue-dark);
+}
+.btn-brand:disabled {
+  opacity: 0.5;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--brand-blue);
+  border-color: var(--brand-blue);
+}

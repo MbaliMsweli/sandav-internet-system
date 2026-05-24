@@ -1,0 +1,27 @@
+- generic [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "Sandav Internet" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e5]:
+        - link "Requests" [active] [ref=e6] [cursor=pointer]:
+          - /url: /requests
+        - link "Clients" [ref=e7] [cursor=pointer]:
+          - /url: /clients
+        - link "Billing" [ref=e8] [cursor=pointer]:
+          - /url: /billing
+  - main [ref=e9]:
+    - generic [ref=e36]:
+      - generic [ref=e37]:
+        - heading "Requests" [level=1] [ref=e38]
+        - link "+ New Request" [ref=e39] [cursor=pointer]:
+          - /url: /requests/new
+      - generic [ref=e40]:
+        - paragraph [ref=e41]: No pending requests
+        - paragraph [ref=e42]:
+          - text: Click
+          - strong [ref=e43]: + New Request
+          - text: to add one
+  - button "Open Next.js Dev Tools" [ref=e31] [cursor=pointer]:
+    - img [ref=e32]
+  - alert [ref=e35]

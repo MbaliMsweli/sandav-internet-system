@@ -1,0 +1,58 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "Sandav Internet" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e5]:
+        - link "Requests" [ref=e6] [cursor=pointer]:
+          - /url: /requests
+        - link "Clients" [ref=e7] [cursor=pointer]:
+          - /url: /clients
+        - link "Billing" [ref=e8] [cursor=pointer]:
+          - /url: /billing
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - heading "Billing" [level=1] [ref=e11]
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - combobox [ref=e14]:
+            - option "January"
+            - option "February"
+            - option "March"
+            - option "April"
+            - option "May" [selected]
+            - option "June"
+            - option "July"
+            - option "August"
+            - option "September"
+            - option "October"
+            - option "November"
+            - option "December"
+          - combobox [ref=e15]:
+            - option "2026" [selected]
+            - option "2025"
+            - option "2024"
+        - generic [ref=e16]:
+          - generic [ref=e17]:
+            - generic [ref=e18]: 0/1
+            - generic [ref=e19]: Paid (May)
+          - generic [ref=e20]:
+            - generic [ref=e21]: 1/1
+            - generic [ref=e22]: Unpaid (May)
+          - generic [ref=e23]:
+            - generic [ref=e24]: R0
+            - generic [ref=e25]: Collected
+          - generic [ref=e26]:
+            - generic [ref=e27]: 0/1
+            - generic [ref=e28]: Paid in April
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - generic [ref=e34]:
+              - generic [ref=e35]: John Dlamini
+              - generic [ref=e36]: Unpaid
+            - paragraph [ref=e37]: 0712345678 • LTE
+          - generic [ref=e38]:
+            - paragraph [ref=e39]: R299/mo
+            - button "Mark Paid" [ref=e40]
+  - button "Open Next.js Dev Tools" [ref=e46] [cursor=pointer]:
+    - img [ref=e47]
